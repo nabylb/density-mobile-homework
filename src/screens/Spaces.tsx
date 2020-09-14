@@ -1,29 +1,79 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {View, StyleSheet, UIManager, Platform} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useSocket} from '../hooks';
+import {useDispatch, useSelector} from 'react-redux';
+import _ from 'lodash';
+import {setIsLoading, addSpace} from '../store/actions';
+import {useFetch} from '../hooks';
 import {DyHeader} from '../components/atoms';
 import {DyList} from '../components/templates';
+import {useAlerts} from '../context/AlertsContext';
 import {Colors} from '../styles';
-import {SpacesType} from '../types';
-
-const spaces: SpacesType[] = [];
+import {SpaceType} from '../types';
 
 const Spaces = () => {
+  const [previousData, setPreviousData] = useState<SpaceType | null>(null);
+  const [previousEvent, setPreviousEvent] = useState<SpaceType | null>(null);
   const insets = useSafeAreaInsets();
-  const res = useSocket(
-    'wss://sockets.density.io:8443/v1/?code=skc_3563ltZpu4k6ovNRxB1dySFMqR5edEUF',
+  const res = useFetch();
+  const [showAlert] = useAlerts();
+
+  const dispatch = useDispatch();
+  const _setIsLoading = useCallback(setIsLoading, [dispatch]);
+  const _addSpace = useCallback(
+    (space: SpaceType) => dispatch(addSpace(space)),
+    [dispatch],
   );
+  const _data = useSelector((state) => state.spaces.spaces);
 
-  const data = JSON.parse(res.data);
+  _setIsLoading(res.isLoading);
 
-  if (data && data.payload) {
-    spaces[data.payload.space_id] = {
-      name: data.payload.space_id,
-      count: data.payload.count,
-      id: data.payload.serial_number,
-    };
-  }
+  useEffect(() => {
+    if (
+      Platform.OS === 'android' &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (res.error) {
+      showAlert(res.error);
+      res.setError(null);
+    }
+  }, [res.error, res.setError]);
+
+  useEffect(() => {
+    if (res.data && !_.isEqual(res.data, previousData)) {
+      res.data.map(
+        (item: {id: any; name: any; current_count: any; capacity: any}) => {
+          _addSpace({
+            id: item.id,
+            name: item.name,
+            count: item.current_count,
+            capacity: item.capacity || -1,
+          });
+        },
+      );
+    }
+    setPreviousData(res.data);
+  }, [res.data]);
+
+  useEffect(() => {
+    let event = JSON.parse(res.event);
+
+    if (!event || !event.payload) return;
+
+    if (!_.isEqual(event.payload, previousEvent)) {
+      _addSpace({
+        id: event.payload.space_id,
+        count: event.payload.count,
+      });
+    }
+    setPreviousEvent(event.payload);
+  }, [res.event]);
+
   return (
     <View
       style={[
@@ -32,8 +82,9 @@ const Spaces = () => {
       ]}>
       <DyList
         header={<DyHeader title="Spaces" />}
-        spaces={Object.values(spaces)}
+        spaces={_data}
         loading={res.isLoading}
+        refetch={res.refetch}
       />
     </View>
   );
