@@ -50,7 +50,7 @@ const AlertsProvider = ({children}: {children: JSX.Element}) => {
   const automaticHide = () => {
     Animated.timing(statusPosY, {
       toValue: Metrics.alert.height,
-      duration: Metrics.alertAnimation.hideDuration,
+      duration: Metrics.alertAnimation.showDuration,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => {
