@@ -36,10 +36,11 @@ type FontType = {
   };
 };
 
-type SpacesType = {
+type SpaceType = {
   name: string;
   count: number;
   id: string;
+  capacity: number;
 };
 
 enum DyIconType {
@@ -51,4 +52,4 @@ enum Alerts {
   Info = 'info',
 }
 
-export {Alerts, DyIconType, SpacesType, FontType};
+export {Alerts, DyIconType, SpaceType, FontType};
