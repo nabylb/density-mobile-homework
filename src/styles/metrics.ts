@@ -9,7 +9,7 @@ const Metrics = {
   },
   alertAnimation: {
     showDuration: 300,
-    hideDuration: 400,
+    hideDuration: 4000,
   },
   icon: {
     size: 20,
