@@ -1,24 +1,34 @@
 import React, {useState} from 'react';
-import {View, FlatList, Text, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet} from 'react-native';
+import LottieView from 'lottie-react-native';
 import DyCard from '../molecules/DyCard';
-import {SpacesType} from '../../types';
+import {Animations, Metrics} from '../../styles';
+import {SpaceType} from '../../types';
 import {useAlerts} from '../../context/AlertsContext';
+import {resolveConfig} from 'prettier';
 
 interface IProps {
   header?: JSX.Element | null;
-  spaces?: SpacesType[];
+  spaces?: SpaceType[];
   loading: boolean;
+  refetch: () => void;
 }
 
-const DyList: React.FC<IProps> = ({header = null, spaces = [], loading}) => {
+const DyList: React.FC<IProps> = ({
+  header = null,
+  spaces = [],
+  loading,
+  refetch,
+}) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [showAlert] = useAlerts();
 
   const renderSpace = (item: any) => {
     return (
       <DyCard
-        title={item.item.name}
-        number={item.item.count}
+        name={item.item.name}
+        count={item.item.count}
+        capacity={item.item.capacity}
         id={item.item.id}
         onPress={null}
         onLongPress={null}
@@ -27,10 +37,10 @@ const DyList: React.FC<IProps> = ({header = null, spaces = [], loading}) => {
   };
 
   const onRefresh = () => {
-    setRefreshing(true);
-    showAlert('Hello');
-    setTimeout(() => setRefreshing(false), 3000);
+    setRefreshing(false);
+    refetch();
   };
+
   return (
     <View style={styles.container}>
       {header}
@@ -39,12 +49,23 @@ const DyList: React.FC<IProps> = ({header = null, spaces = [], loading}) => {
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
-            data={spaces}
+            data={Object.values(spaces)}
             renderItem={renderSpace}
             keyExtractor={(item) => `${item.id}`}
           />
         ) : (
-          <Text>Waiting for Data</Text>
+          <View style={styles.loadingContainer}>
+            <LottieView
+              source={Animations.loading}
+              autoPlay
+              loop
+              resizeMode="cover"
+              style={{
+                height: Metrics.screenWidth / 2,
+                width: Metrics.screenWidth / 2,
+              }}
+            />
+          </View>
         )}
       </View>
     </View>
@@ -54,6 +75,12 @@ const DyList: React.FC<IProps> = ({header = null, spaces = [], loading}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 15,
   },
   listContainer: {
     flex: 1,

@@ -3,12 +3,19 @@ import {TouchableHighlight, Text, View, StyleSheet} from 'react-native';
 import {Typography, Colors, Metrics} from '../../styles';
 
 interface IProps {
-  title: string;
-  number: number;
+  name: string;
+  count: number;
+  capacity: number;
   onPress: () => void;
   onLongPress: () => void;
 }
-const DyCard: React.FC<IProps> = ({title, number, onPress, onLongPress}) => {
+const DyCard: React.FC<IProps> = ({
+  name,
+  count,
+  capacity,
+  onPress,
+  onLongPress,
+}) => {
   return (
     <TouchableHighlight
       style={[styles.container, {borderBottomColor: Colors.grey50}]}
@@ -18,8 +25,15 @@ const DyCard: React.FC<IProps> = ({title, number, onPress, onLongPress}) => {
       onLongPress={onLongPress}>
       <>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{number}</Text>
+          <View style={styles.leftTextContainer}>
+            <Text style={styles.title}>{name}</Text>
+          </View>
+          <View style={styles.rightTextContainer}>
+            <Text style={styles.subtitle}>{count}</Text>
+            <Text style={styles.capacity}>
+              /{capacity === -1 ? 'N/A' : capacity}
+            </Text>
+          </View>
         </View>
       </>
     </TouchableHighlight>
@@ -37,11 +51,16 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.titleStyle,
-    color: Colors.dark,
+    color: Colors.accent,
     fontWeight: '600',
   },
   subtitle: {
+    ...Typography.titleStyle,
+    color: Colors.dark,
+  },
+  capacity: {
     ...Typography.bodyStyle,
+    color: Colors.dark,
   },
   titleContainer: {
     flex: 1,
@@ -50,6 +69,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  leftTextContainer: {
+    flex: 5,
+  },
+  rightTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
 });
 

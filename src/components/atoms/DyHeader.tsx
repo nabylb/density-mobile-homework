@@ -20,12 +20,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     width: Metrics.screenWidth,
-
     marginBottom: 20,
   },
   title: {
     ...Typography.headlineStyle,
-    color: Colors.primary,
+    color: Colors.text,
     textAlign: 'center',
   },
 });
