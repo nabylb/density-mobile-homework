@@ -8,6 +8,11 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Spaces from './src/screens/Spaces';
 import {AlertsProvider} from './src/context/AlertsContext';
 
+// Disable console.log in prod
+if (!__DEV__) {
+  console.log = () => {};
+}
+
 const Stack = createStackNavigator();
 
 const MainStack = () => {
