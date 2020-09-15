@@ -7,6 +7,10 @@ const Metrics = {
     height: 40,
     padding: 10,
   },
+  margin: {
+    s: 15,
+    m: 20,
+  },
   alertAnimation: {
     showDuration: 300,
     hideDuration: 4000,

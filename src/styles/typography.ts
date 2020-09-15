@@ -10,14 +10,14 @@ const Typography: FontType = {
     color: Colors.white,
   },
   titleStyle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'normal',
     fontStyle: 'normal',
     letterSpacing: 0.44,
     color: Colors.white,
   },
   bodyStyle: {
-    fontSize: 16,
+    fontSize: 10,
     fontWeight: 'normal',
     fontStyle: 'normal',
     letterSpacing: 0.44,
