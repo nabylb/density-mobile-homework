@@ -1,12 +1,12 @@
-import React, {useRef, useState} from 'react';
+import React from 'react';
 import {
   TouchableHighlight,
   Text,
   View,
   StyleSheet,
   Animated,
-  Easing,
 } from 'react-native';
+import {useAnimate} from '../../hooks';
 import {Typography, Colors, Metrics} from '../../styles';
 
 interface IProps {
@@ -23,37 +23,10 @@ const DyCard: React.FC<IProps> = ({
   onPress,
   onLongPress,
 }) => {
-  const [lastCount, setLastCount] = useState<number | null>(null);
-  const colorAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;
-
-  if (lastCount !== count) {
-    if (lastCount) {
-      Animated.sequence([
-        Animated.timing(colorAnimation, {
-          toValue: 1,
-          easing: Easing.sin,
-          duration: 100,
-          useNativeDriver: false,
-        }),
-        Animated.timing(colorAnimation, {
-          toValue: 0,
-          easing: Easing.ease,
-          duration: 500,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    }
-    setLastCount(count);
-  }
-
-  const boxInterpolation = colorAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.primary, Colors.accent],
-  });
+  const {bgColor} = useAnimate(count);
 
   return (
-    <Animated.View
-      style={[styles.container, {backgroundColor: boxInterpolation}]}>
+    <Animated.View style={[styles.container, {backgroundColor: bgColor}]}>
       <TouchableHighlight
         style={styles.titleContainer}
         activeOpacity={0.8}
