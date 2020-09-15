@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import _ from 'lodash';
 
 axios.defaults.baseURL = 'https://api.density.io/v2';
 axios.defaults.headers.common['Authorization'] =
@@ -8,24 +9,27 @@ axios.defaults.headers.common['Authorization'] =
 
 const useFetch = () => {
   const [data, setData] = useState<any>(null);
-  const [event, setEvent] = useState<string>(null);
+  const [event, setEvent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const loadSpaces = async () => {
-      const spaces = await AsyncStorage.getItem('density.spaces.spaces');
-      return spaces;
+    const shouldLoadSpacesList = async () => {
+      const spaces = await AsyncStorage.getItem('persist:density');
+      if (
+        !spaces ||
+        (spaces && _.isEmpty(JSON.parse(JSON.parse(spaces).spaces).spaces))
+      ) {
+        fetch();
+      } else {
+        websocket();
+      }
     };
 
-    if (!loadSpaces()) {
-      refetch();
-    } else {
-      websocket();
-    }
+    shouldLoadSpacesList();
   }, []);
 
-  const refetch = () => {
+  const fetch = () => {
     setIsLoading(true);
 
     axios({
@@ -80,7 +84,7 @@ const useFetch = () => {
       });
   };
 
-  return {data, event, error, isLoading, refetch, setError};
+  return {data, event, error, isLoading, refetch: fetch, setError};
 };
 
 export default useFetch;
