@@ -10,8 +10,8 @@ The project was completed with React Native 0.63.2 and Typescript. The libraries
 
 # iOS Demo
 
-![iPhone demo](/resources/ios.gif)
+![iPhone demo](./resources/ios.gif)
 
 # Android Demo
 
-![Android demo](/resources/android.gif)
+![Android demo](./resources/android.gif)
