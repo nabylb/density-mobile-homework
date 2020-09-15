@@ -5,7 +5,6 @@ import DyCard from '../molecules/DyCard';
 import {Animations, Metrics} from '../../styles';
 import {SpaceType} from '../../types';
 import {useAlerts} from '../../context/AlertsContext';
-import {resolveConfig} from 'prettier';
 
 interface IProps {
   header?: JSX.Element | null;
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 15,
+    margin: Metrics.margin.s,
   },
   listContainer: {
     flex: 1,
