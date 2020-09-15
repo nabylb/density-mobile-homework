@@ -8,6 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "style": "prettier --trailing-comma es5 --no-semi --single-quote --write \"src/**/*.js\"",
     "android:log": "react-native log-android",
     "ios:log": "react-native log-ios",
     "ios:sim": "./scripts/start_ios_simulator.sh",

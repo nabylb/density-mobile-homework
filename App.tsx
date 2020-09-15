@@ -33,7 +33,9 @@ const App = () => {
     });
   }, []);
 
-  if (!store) return null;
+  if (!store) {
+    return null;
+  }
   return (
     <SafeAreaProvider>
       <NavigationContainer>

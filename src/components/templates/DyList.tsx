@@ -4,7 +4,6 @@ import LottieView from 'lottie-react-native';
 import DyCard from '../molecules/DyCard';
 import {Animations, Metrics} from '../../styles';
 import {SpaceType} from '../../types';
-import {useAlerts} from '../../context/AlertsContext';
 
 interface IProps {
   header?: JSX.Element | null;
@@ -20,7 +19,6 @@ const DyList: React.FC<IProps> = ({
   refetch,
 }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [showAlert] = useAlerts();
 
   const renderSpace = (item: any) => {
     return (

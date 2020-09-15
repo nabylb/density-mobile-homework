@@ -1,1 +1,1 @@
-export * from './SpacesActions';
+export * from './SpacesActions'

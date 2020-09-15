@@ -12,7 +12,7 @@ type FontWeight =
   | '900';
 type FontStyle = 'normal' | 'italic' | undefined;
 
-type FontType = {
+export type FontType = {
   headlineStyle: {
     fontSize: number;
     fontWeight: FontWeight;
@@ -36,20 +36,18 @@ type FontType = {
   };
 };
 
-type SpaceType = {
-  name: string;
+export type SpaceType = {
+  name?: string;
   count: number;
   id: string;
-  capacity: number;
+  capacity?: number;
 };
 
-enum DyIconType {
+export enum DyIconType {
   Error = 'error',
   Info = 'info',
 }
-enum Alerts {
+export enum Alerts {
   Error = 'error',
   Info = 'info',
 }
-
-export {Alerts, DyIconType, SpaceType, FontType};
