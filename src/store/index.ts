@@ -9,7 +9,6 @@ export const createLocalStore = async () => {
   const persistConfig = {
     key: `density`,
     version: 1,
-    blacklist: ['ble.isScanning'],
     storage: AsyncStorage,
   };
 
