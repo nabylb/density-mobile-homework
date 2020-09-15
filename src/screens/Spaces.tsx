@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, StyleSheet, UIManager, Platform} from 'react-native';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {View, StyleSheet, NativeModules, LayoutAnimation} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import _ from 'lodash';
@@ -11,31 +11,35 @@ import {useAlerts} from '../context/AlertsContext';
 import {Colors} from '../styles';
 import {SpaceType} from '../types';
 
+// Layout animation
+const {UIManager} = NativeModules;
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+
 const Spaces = () => {
   const [previousData, setPreviousData] = useState<SpaceType | null>(null);
   const [previousEvent, setPreviousEvent] = useState<SpaceType | null>(null);
+  const [spacesCount, setSpacesCount] = useState<number>(0);
+  const [notification, setNotification] = useState<boolean>(false);
+
   const insets = useSafeAreaInsets();
   const res = useFetch();
   const [showAlert] = useAlerts();
 
   const dispatch = useDispatch();
   const _setIsLoading = useCallback(setIsLoading, [dispatch]);
+  const _data = useSelector((state) => state.spaces.spaces);
+
   const _addSpace = useCallback(
     (space: SpaceType) => dispatch(addSpace(space)),
     [dispatch],
   );
-  const _data = useSelector((state) => state.spaces.spaces);
-
-  _setIsLoading(res.isLoading);
 
   useEffect(() => {
-    if (
-      Platform.OS === 'android' &&
-      UIManager.setLayoutAnimationEnabledExperimental
-    ) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
+    if (notification) {
+      setNotification(false);
     }
-  }, []);
+  }, [notification]);
 
   useEffect(() => {
     if (res.error) {
@@ -46,6 +50,8 @@ const Spaces = () => {
 
   useEffect(() => {
     if (res.data && !_.isEqual(res.data, previousData)) {
+      LayoutAnimation.spring();
+      setSpacesCount(res.data.length);
       res.data.map(
         (item: {id: any; name: any; current_count: any; capacity: any}) => {
           _addSpace({
@@ -70,9 +76,12 @@ const Spaces = () => {
         id: event.payload.space_id,
         count: event.payload.count,
       });
+      setNotification(true);
     }
     setPreviousEvent(event.payload);
   }, [res.event]);
+
+  _setIsLoading(res.isLoading);
 
   return (
     <View
@@ -81,7 +90,14 @@ const Spaces = () => {
         {paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 16)},
       ]}>
       <DyList
-        header={<DyHeader title="Spaces" />}
+        header={
+          <DyHeader
+            title="Spaces"
+            count={spacesCount}
+            isLoading={res.isLoading}
+            notification={notification}
+          />
+        }
         spaces={_data}
         loading={res.isLoading}
         refetch={res.refetch}
